@@ -1,8 +1,8 @@
 import pygame
+import numpy as np
 from classNave import Nave
 from classEnemigo import Enemigo
 import time
-
 
 # Inicializar pantalla
 pygame.init()
@@ -14,19 +14,25 @@ bg = 25, 25, 25
 screen.fill(bg)
 
 # Inicializacion de nave del jugador
-nave = Nave(screen, (width/2-25, height-75), (30, 50))
+velJX, velJY = 5, 5
+widthJ, heightJ = 30, 50
+framesPerBullet = 10
+nave = Nave(screen, (width / 2 - 25, height - 75), (widthJ, heightJ), (velJX, velJY), framesPerBullet)
 
 # Inicializacion de naves enemigas
-enemigo = Enemigo(screen, (50, 50), (25, 25))
-
+enemigos = []
+id, enemyWidth, enemyHeight, velEnemyMax = 0, 25, 25, 1
+frames_per_enemy, counterEnemy = 200, 0
 running = True
 while running:
-    time.sleep(0.1)
+    time.sleep(0.03333)
+
     screen.fill(bg)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+    # Movimientos del jugador
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP] or keys[pygame.K_w]:
         nave.move(pygame.K_UP)
@@ -42,7 +48,41 @@ while running:
     if mouseClick[0] == 1 or keys[pygame.K_SPACE]:
         nave.shot()
     nave.draw()
-    enemigo.draw()
+
+    # Generar enemigos
+    if counterEnemy == 0:
+        generarEnemigo = np.random.rand()
+        if generarEnemigo > 0.75:
+            vel = np.floor((np.random.rand() * velEnemyMax)) + 1
+            enemigos.append(
+                Enemigo(screen, id, (np.floor(np.random.rand() * width), 0), (enemyWidth, enemyHeight), vel))
+            id += 1
+            counterEnemy += 1
+    else:
+        if counterEnemy == frames_per_enemy:
+            counterEnemy = 0
+        else:
+            counterEnemy += 1
+
+    # Mover enemigos
+    for i in reversed(range(0, len(enemigos))):
+        remove = False
+        enemigos[i].draw()
+        # Comprobar colisiones con nave del jugador
+        print("i, len: " + str(enemigos[i].tr1[0]) + str(len(enemigos)))
+        if nave.colision(enemigos[i].tr1[0]) or nave.colision(enemigos[i].tr1[1]) or nave.colision(enemigos[i].tr1[2]):
+            print("Colision con nave! id: " + str(enemigos[i].id))
+        # Comprobar colisiones con las balas
+        for j in range(0, len(nave.balas)):
+            if nave.balas[j].colision(enemigos[i]):
+                print("Diana!")
+                remove = True
+        if remove:
+            enemigos.pop(i)
+        else:
+            enemigos[i].move()
+
+
     pygame.display.flip()
 
 print("Saliendo...")
