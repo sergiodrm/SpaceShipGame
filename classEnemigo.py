@@ -7,6 +7,7 @@ class Enemigo(Nave):
         Nave.__init__(self, screen, pos, dim)
         self.velY = velY
         self.id = id
+        self.shotProb = 0.2
 
     def draw(self):
         self.tr1 = [[self.x + self.width / 2, self.y + self.height],
@@ -28,6 +29,8 @@ class Enemigo(Nave):
                 self.frame += 1
             else:
                 self.frame = 0
+
+        self.moveBullets()
 
     def move(self):
         self.y += self.velY

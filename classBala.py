@@ -17,20 +17,10 @@ class Bala:
         self.y += self.vel
 
     def colision(self, nave):
-        if nave.x < self.x < nave.x + nave.width and nave.y < self.y < nave.y + self.height:
-            if nave.x < self.x <= nave.x + nave.width / 2:
+        if nave.x < self.x < nave.x + nave.width:
+            if nave.y < self.y < nave.y + nave.height:
                 y = ((nave.tr1[1][1]-nave.tr1[0][1]) / (nave.tr1[1][0]-nave.tr1[0][0])) * \
                     (self.x - nave.tr1[0][0]) + nave.tr1[0][1]
-            elif nave.x + nave.width / 2 < self.x < nave.x + nave.width:
-                y = ((nave.tr1[2][1] - nave.tr1[0][1]) / (nave.tr1[2][0] - nave.tr1[0][0])) * \
-                    (self.x - nave.tr1[0][0]) + nave.tr1[0][1]
-
-            if y > nave.tr1[1][1]:  # Nave enemiga
-                if nave.tr1[1][1] < self.y < y or self.y <= nave.tr1[1][1] < self.y - self.vel:
+                if self.y - y <= 0:
                     return True
-                return False
-            else:
-                if y < self.y < nave.tr1[1][1] or self.y + self.vel > nave.tr1[1][1] or self.y - self.vel < nave.tr1[1][1]:
-                    return True
-                return False
         return False

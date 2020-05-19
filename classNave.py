@@ -1,5 +1,6 @@
 import pygame
 from classBala import Bala
+from classCorazon import Corazon
 
 
 class Nave:
@@ -7,7 +8,13 @@ class Nave:
         # Inicializacion de posicion y velocidad de la nave
         self.x, self.y = pos
         self.velX, self.velY = vel
-        self.ps = 3
+        self.vidas = 3
+        self.spriteCorazones = [
+            Corazon((0, pygame.display.get_surface().get_height() - 10), (10, 10)),
+            Corazon((15, pygame.display.get_surface().get_height() - 10), (10, 10)),
+            Corazon((30, pygame.display.get_surface().get_height() - 10), (10, 10))
+        ]
+
         # Dimensiones de la nave
         self.width, self.height = dim
         # Objeto ventana para dibujar
@@ -48,12 +55,7 @@ class Nave:
         pygame.draw.polygon(self.screen, (150, 20, 100), self.ca1, 2)
         pygame.draw.polygon(self.screen, (150, 20, 100), self.ca2, 2)
         pygame.draw.polygon(self.screen, (128, 128, 125), self.tr1, 0)
-        for b in reversed(range(0, len(self.balas))):
-            if self.balas[b].y + self.balas[b].height < 0:
-                self.balas.pop(b)
-            else:
-                self.balas[b].draw()
-                self.balas[b].move()
+
 
         # Como la nave se dibuja en cada frame, se hace la cuenta de los disparos cada x frame en este metodo
         if not self.frame == 0:
@@ -61,6 +63,8 @@ class Nave:
                 self.frame = 0
             else:
                 self.frame += 1
+
+        self.moveBullets()
 
     def move(self, dir):
         if dir == pygame.K_UP and self.y >= 0:
@@ -77,6 +81,14 @@ class Nave:
             self.balas.append(Bala(self.screen, (self.ca1[0][0], self.y), (1, 5), vel=-8))
             self.balas.append(Bala(self.screen, (self.ca2[0][0], self.y), (1, 5), vel=-8))
             self.frame += 1
+
+    def moveBullets(self):
+        for b in reversed(range(0, len(self.balas))):
+            if self.balas[b].y + self.balas[b].height < 0:
+                self.balas.pop(b)
+            else:
+                self.balas[b].draw()
+                self.balas[b].move()
 
     def colision(self, pos, vel=0):
         # Se especifica si la posicion dada esta o no dentro del triangulo principal de la nave
