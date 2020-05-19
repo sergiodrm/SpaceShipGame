@@ -11,3 +11,4 @@ class Corazon(pygame.sprite.Sprite):
         self.dim = dim
         self.image = fcn.loadImage("corazon.png", "Imagenes")
         self.image = pygame.transform.scale(self.image, dim)
+        self.rect = (pos, dim)

@@ -21,6 +21,10 @@ class Bala:
             if nave.y < self.y < nave.y + nave.height:
                 y = ((nave.tr1[1][1]-nave.tr1[0][1]) / (nave.tr1[1][0]-nave.tr1[0][0])) * \
                     (self.x - nave.tr1[0][0]) + nave.tr1[0][1]
-                if self.y - y <= 0:
-                    return True
+                if not nave.id == 0:
+                    if self.y - y <= 0:
+                        return True
+                else:
+                    if y - self.y <= 0:
+                        return True
         return False
